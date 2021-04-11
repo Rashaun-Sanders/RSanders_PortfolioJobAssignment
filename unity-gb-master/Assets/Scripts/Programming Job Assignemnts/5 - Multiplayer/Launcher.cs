@@ -5,11 +5,14 @@ using Photon.Pun;
 using TMPro;
 using Photon.Realtime;
 using System.Linq;
+using UnityEngine.UI;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
 
     public static Launcher Instance;
+    private const string PlayerPrefsNamekey = "PlayerName";
+
 
     [SerializeField] TMP_InputField roomNameInputField;
     [SerializeField] TMP_Text errorText;
@@ -19,7 +22,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField] GameObject roomListPrefab;
     [SerializeField] GameObject playerListPrefab;
     [SerializeField] GameObject startGameButton;
-
+    [SerializeField] private TMP_InputField nameInputField = null;
+    [SerializeField] private Button continueButton = null;
     void Awake()
     {
         Instance = this;
@@ -28,6 +32,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        SetUpInputField();
         Debug.Log("Connecting to Master");
         PhotonNetwork.ConnectUsingSettings();
     }
@@ -43,7 +48,6 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         MenuManager.Instance.OpenMenu("Title");
         Debug.Log("Joined Lobby");
-        PhotonNetwork.NickName = "Player " + Random.Range(0, 1000).ToString("0000");
     }
 
     // Update is called once per frame
@@ -126,5 +130,30 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Instantiate(playerListPrefab, playerListContent).GetComponent<PlayerListItem>().SetUp(newPlayer);
+    }
+
+    private void SetUpInputField()
+    {
+        if (!PlayerPrefs.HasKey(PlayerPrefsNamekey)) { return; }
+
+        string defaultName = PlayerPrefs.GetString(PlayerPrefsNamekey);
+
+        nameInputField.text = defaultName;
+
+        SetPlayerName(defaultName);
+    }
+
+    public void SetPlayerName(string name)
+    {
+        continueButton.interactable = !string.IsNullOrEmpty(name);
+    }
+
+    public void SavePlayerName()
+    {
+        string playerName = nameInputField.text;
+
+        PhotonNetwork.NickName = playerName;
+
+        PlayerPrefs.SetString(PlayerPrefsNamekey, playerName);
     }
 }
