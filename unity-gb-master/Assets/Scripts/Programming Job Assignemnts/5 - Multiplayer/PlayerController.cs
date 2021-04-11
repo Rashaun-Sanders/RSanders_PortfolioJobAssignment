@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
 
     PhotonView pv;
 
+    [SerializeField] Collider Collider;
+    [SerializeField] Collider GroundCheck;
+
 
     void Awake()
     {
@@ -30,6 +33,8 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(GetComponentInChildren<Camera>().gameObject);
             Destroy(rb);
+            Destroy(Collider);
+            Destroy(GroundCheck);
         }
     }
 
