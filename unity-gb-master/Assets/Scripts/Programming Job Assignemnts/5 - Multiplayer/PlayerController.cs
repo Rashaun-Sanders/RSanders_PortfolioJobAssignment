@@ -20,11 +20,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Collider Collider;
     [SerializeField] Collider GroundCheck;
 
+    PlayerManager playerManager;
+
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         pv = GetComponent<PhotonView>();
+
+        playerManager = PhotonView.Find((int)pv.InstantiationData[0]).GetComponent<PlayerManager>();
     }
 
     void Start()
@@ -46,6 +50,11 @@ public class PlayerController : MonoBehaviour
         Look();
         Move();
         Jump();
+
+        if(transform.position.y < -10f)
+        {
+            Die();
+        }
     }
 
 
@@ -85,5 +94,10 @@ public class PlayerController : MonoBehaviour
             return;
 
         rb.MovePosition(rb.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
+    }
+
+    void Die()
+    {
+        playerManager.Die();
     }
 }
