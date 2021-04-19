@@ -156,4 +156,11 @@ public class Launcher : MonoBehaviourPunCallbacks
 
         PlayerPrefs.SetString(PlayerPrefsNamekey, playerName);
     }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+
+        Debug.Log("Quit");
+    }
 }
